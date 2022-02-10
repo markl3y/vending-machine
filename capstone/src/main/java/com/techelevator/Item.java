@@ -1,24 +1,25 @@
 package com.techelevator;
 
-public abstract class Item {
+public class Item {
 
     //Instance Vars
     private double price;
-    private String itemCode;
+    private String itemSlot;
     private String itemType;
     private String itemName;
 
+
     //Constructor
-    public Item(String itemCode, String itemName, double price, String itemType) {
-        this.itemCode = itemCode;
+    public Item(String itemSlot, String itemName, double price, String itemType) {
+        this.itemSlot = itemSlot;
         this.itemName = itemName;
         this.price = price;
         this.itemType = itemType;
     }
 
     //Gets (no sets)
-    public String getItemCode() {
-        return itemCode;
+    public String getItemSlot() {
+        return itemSlot;
     }
 
     public String getItemName() {
@@ -32,4 +33,5 @@ public abstract class Item {
     public String getItemType() {
         return itemType;
     }
+
 }

@@ -1,6 +1,7 @@
 package com.techelevator;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class VendingMachine {
@@ -10,11 +11,16 @@ public class VendingMachine {
     private double balance;
 
     //Constructor
-    VendingMachine(File inputFile) {
-        Scanner fileInput = new Scanner(inputFile)
-                while (.hasNextLine())
+    public VendingMachine(File inputFile) throws FileNotFoundException {
+        Scanner fileInput = new Scanner(inputFile);
+        String line = fileInput.nextLine();
+        while (fileInput.hasNextLine()) {
+            if (line.contains("Chip")) {
+                items.add(new ChipItem(line));
+            }
+        }
                 //For each extract line,
-                    items.add(new Item(sdasdasdasd));
+                    //items.add(new Item());
         //    //create an Item from that line, add it to an Item list.
         for (Item item : items) {
             inventory.put(item, 5);
