@@ -1,16 +1,18 @@
 package com.techelevator;
 
+import java.math.BigDecimal;
+
 public class Item {
 
     //Instance Vars
-    private double price;
+    private BigDecimal price;
     private String itemSlot;
     private String itemType;
     private String itemName;
 
 
     //Constructor
-    public Item(String itemSlot, String itemName, double price, String itemType) {
+    public Item(String itemSlot, String itemName, BigDecimal price, String itemType) {
         this.itemSlot = itemSlot;
         this.itemName = itemName;
         this.price = price;
@@ -26,7 +28,7 @@ public class Item {
         return itemName;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 

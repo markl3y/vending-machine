@@ -24,6 +24,15 @@ public class Menu {
 		return choice;
 	}
 
+	public Object getChoiceFromOptionsSecret(Object[] options) {
+		Object choice = null;
+		while (choice == null) {
+			displayMenuOptionsSecret(options);
+			choice = getChoiceFromUserInput(options);
+		}
+		return choice;
+	}
+
 	private Object getChoiceFromUserInput(Object[] options) {
 		Object choice = null;
 		String userInput = in.nextLine();
@@ -44,6 +53,16 @@ public class Menu {
 	private void displayMenuOptions(Object[] options) {
 		out.println();
 		for (int i = 0; i < options.length; i++) {
+			int optionNum = i + 1;
+			out.println(optionNum + ") " + options[i]);
+		}
+		out.print(System.lineSeparator() + "Please choose an option >>> ");
+		out.flush();
+	}
+
+	private void displayMenuOptionsSecret(Object[] options) {
+		out.println();
+		for (int i = 0; i < options.length - 1; i++) {
 			int optionNum = i + 1;
 			out.println(optionNum + ") " + options[i]);
 		}
