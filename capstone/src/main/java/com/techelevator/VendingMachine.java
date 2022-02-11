@@ -1,7 +1,8 @@
 package com.techelevator;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class VendingMachine {
@@ -9,6 +10,7 @@ public class VendingMachine {
     private Map<Item, Integer> inventory = new HashMap<>();
     private List<Item> items = new ArrayList<>();
     private double balance;
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a ");
 
     //Constructor
     public VendingMachine(File inputFile) {
@@ -69,6 +71,14 @@ public class VendingMachine {
 
     public void insertBill(double billAmount) {
         this.balance += billAmount;
+
+        // Log transaction
+        try (PrintWriter log = new PrintWriter(new FileWriter("log.txt", true))) {
+            String formattedDate = dateTimeFormatter.format(LocalDateTime.now());
+            log.println(formattedDate + "FEED MONEY: $" + (this.getBalance() - billAmount) + " $" + balance);
+        } catch (IOException e) {
+            System.out.println("Caught an IOException. Message: " + e.getMessage());
+        }
     }
 
     public void dispenseItem(Item item) {
@@ -76,6 +86,11 @@ public class VendingMachine {
             balance -= item.getPrice();
             inventory.put(item, inventory.get(item) - 1);
         }
+
+        //condition for balance not being enough
+
+
+
         String flavorMessage = "";
         switch (item.getItemType()) {
             case "Chip":
@@ -88,17 +103,34 @@ public class VendingMachine {
                 flavorMessage = "Glug Glug, Yum!";
                 break;
             case "Gum":
-                flavorMessage = "Glug Glug, Yum!";
+                flavorMessage = "Chew Chew, Yum!";
                 break;
         }
         //item name, cost, and the money remaining, plus the flavor text.
         System.out.println("\nNow dispensing: " + item.getItemName() + ".\n\nYou have been charged $" + item.getPrice() + ", and have $" + balance + " remaining.\n" + flavorMessage);
+
+        //log
+        try (PrintWriter log = new PrintWriter(new FileWriter("log.txt", true))) {
+            String formattedDate = dateTimeFormatter.format(LocalDateTime.now());
+            log.println(formattedDate + item.getItemName() + " " + item.getItemSlot() + " $" + (balance + item.getPrice()) + " $" + balance);
+        } catch (IOException e) {
+            System.out.println("Caught an IOException. Message: " + e.getMessage());
+        }
     }
 
     public void dispenseChange() {
         int numQuarters = 0;
         int numDimes = 0;
         int numNickels = 0;
+
+        //log
+        try (PrintWriter log = new PrintWriter(new FileWriter("log.txt", true))) {
+            String formattedDate = dateTimeFormatter.format(LocalDateTime.now());
+            log.println(formattedDate + "GIVE CHANGE: $" + balance + " $0.00");
+        } catch (IOException e) {
+            System.out.println("Caught an IOException. Message: " + e.getMessage());
+        }
+
 
         while (balance >= 0.25) {
             numQuarters++;
@@ -121,5 +153,6 @@ public class VendingMachine {
 
         System.out.println("Now dispensing change: " + numQuarters + " quarters, " + numDimes + " dimes, and " + numNickels + " nickels.");
         balance = 0;
+
     }
 }
