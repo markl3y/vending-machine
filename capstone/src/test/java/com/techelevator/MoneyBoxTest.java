@@ -9,24 +9,40 @@ import java.math.BigDecimal;
 public class MoneyBoxTest {
 
     @Test
-    public void makes_correct_change() throws IOException {
+    public void test_add_money() throws IOException {
         MoneyBox test = new MoneyBox();
         test.addMoney(BigDecimal.valueOf(4));
-
-        int[] expected = {16 ,0, 0};
-        int[] testChange = test.makeChange();
-
-        Assert.assertEquals(expected, testChange);
+        BigDecimal actual = test.getBalance();
+        Assert.assertEquals(actual, BigDecimal.valueOf(4));
     }
 
     @Test
-    public void makes_change_of_four_dollars_one_cent() throws IOException {
+    public void test_make_change() throws IOException {
         MoneyBox test = new MoneyBox();
-        test.addMoney(BigDecimal.valueOf(4.01));
+        test.addMoney(BigDecimal.valueOf(4.05));
 
-        int[] expected = {16, 0, 0};
+        int[] expected = {16, 0, 1};
         int[] testChange = test.makeChange();
 
-        Assert.assertEquals(expected, testChange);
+        String expectedString = "";
+        String actualString = "";
+
+        for (int i = 0; i < expected.length; i++) {
+            expectedString += expected[i];
+            actualString += testChange[i];
+        }
+
+        Assert.assertEquals(expectedString, actualString);
+    }
+
+    @Test
+    public void test_make_purchase() throws IOException {
+        MoneyBox test = new MoneyBox();
+        Item testItem = new Item("A1", "Potato Crisps", BigDecimal.valueOf(3.05), "Chips");
+        test.addMoney(BigDecimal.valueOf(10));
+        test.makePurchase(testItem);
+        BigDecimal actual = test.getBalance();
+
+        Assert.assertEquals(BigDecimal.valueOf(6.95), actual);
     }
 }

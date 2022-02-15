@@ -11,6 +11,8 @@ public class VendingMachine {
     private Map<Item, Integer> inventory = new HashMap<>();
     private List<Item> items = new ArrayList<>();
     private MoneyBox moneyBox = new MoneyBox();
+    private int stuckItemChance = 0;
+    private Item stuckItem;
 
     //Constructor
     public VendingMachine(File inputFile) throws IOException {
@@ -61,12 +63,12 @@ public class VendingMachine {
     }
 
     //Methods
-    public void printCurrent(){
+    public void printCurrent() {
         System.out.println("\n**********Current Inventory**********\n");
         for (Item item : items) {
             if (inventory.get(item) != 0) {
-            System.out.println(item.getItemSlot() + "| " + item.getItemName() + " (" + NumberFormat.getCurrencyInstance().format(item.getPrice()) + ") x " + inventory.get(item));}
-            else {
+                System.out.println(item.getItemSlot() + "| " + item.getItemName() + " (" + NumberFormat.getCurrencyInstance().format(item.getPrice()) + ") x " + inventory.get(item));
+            } else {
                 System.out.println(item.getItemSlot() + "| " + item.getItemName() + " (" + NumberFormat.getCurrencyInstance().format(item.getPrice()) + ") <<< SOLD OUT");
             }
         }
@@ -76,29 +78,39 @@ public class VendingMachine {
         moneyBox.addMoney(billAmount);
     }
 
-    public void dispenseItem(Item item) {
-        if (this.getItemQuantity(item) != 0) {
+    public String dispenseItem(Item item) {
+        Random rand = new Random();
+        int chanceToNotDispense = rand.nextInt(25);
+        if (this.getItemQuantity(item) != 0 && chanceToNotDispense > 1) {
             moneyBox.makePurchase(item);
             inventory.put(item, inventory.get(item) - 1);
+            String flavorMessage = "";
+            switch (item.getItemType()) {
+                case "Chip":
+                    flavorMessage = "\nCrunch Crunch, Yum!";
+                    break;
+                case "Candy":
+                    flavorMessage = "\nMunch Munch, Yum!";
+                    break;
+                case "Drink":
+                    flavorMessage = "\nGlug Glug, Yum!";
+                    break;
+                case "Gum":
+                    flavorMessage = "\nChew Chew, Yum!";
+                    break;
+            }
+            if (stuckItemChance > 0 && stuckItem.getItemName().equals(item.getItemName())) {
+                stuckItemChance = 0;
+                return "\nNow dispensing: " + item.getItemName() + ". Hey look! You got two of them!\n\nYou have been charged " + NumberFormat.getCurrencyInstance().format(item.getPrice()) + ", and have " + NumberFormat.getCurrencyInstance().format(moneyBox.getBalance()) + " remaining.\n" + flavorMessage;
+            }
+            return "\nNow dispensing: " + item.getItemName() + ".\n\nYou have been charged " + NumberFormat.getCurrencyInstance().format(item.getPrice()) + ", and have " + NumberFormat.getCurrencyInstance().format(moneyBox.getBalance()) + " remaining.\n" + flavorMessage;
+        } else {
+            stuckItem = item;
+            moneyBox.makePurchase(item);
+            inventory.put(item, inventory.get(item) - 1);
+            stuckItemChance++;
+            return "\nYour item got stuck while dispensing! Oh brother... \n\nYou have been charged " + NumberFormat.getCurrencyInstance().format(item.getPrice()) + ", and have " + NumberFormat.getCurrencyInstance().format(moneyBox.getBalance()) + " remaining.\n";
         }
-        String flavorMessage = "";
-        switch (item.getItemType()) {
-            case "Chip":
-                flavorMessage = "\nCrunch Crunch, Yum!";
-                break;
-            case "Candy":
-                flavorMessage = "\nMunch Munch, Yum!";
-                break;
-            case "Drink":
-                flavorMessage = "\nGlug Glug, Yum!";
-                break;
-            case "Gum":
-                flavorMessage = "\nChew Chew, Yum!";
-                break;
-        }
-
-        //item name, cost, and the money remaining, plus the flavor text.
-        System.out.println("\nNow dispensing: " + item.getItemName() + ".\n\nYou have been charged " + NumberFormat.getCurrencyInstance().format(item.getPrice()) + ", and have " + NumberFormat.getCurrencyInstance().format(moneyBox.getBalance()) + " remaining.\n" + flavorMessage);
     }
 
     public void dispenseChange() {

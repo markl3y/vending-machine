@@ -7,10 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.Random;
 import java.util.Scanner;
 
 public class VendingMachineCLI {
-
     private static final String MAIN_MENU_OPTION_DISPLAY_ITEMS = "Display Vending Machine Items";
     private static final String MAIN_MENU_OPTION_PURCHASE = "Purchase";
     private static final String MAIN_MENU_OPTION_EXIT = "Exit";
@@ -46,18 +46,53 @@ public class VendingMachineCLI {
                     System.out.println("\nCurrent Money Provided: " + NumberFormat.getCurrencyInstance().format(vendingMachine.getBalance()));
                     choice = (String) menu.getChoiceFromOptions(PURCHASE_MENU_OPTIONS);
                     if (choice.equals(PURCHASE_MENU_OPTION_FEED_MONEY)) {
+                        Random rand = new Random();
+                        int randomChanceReject = rand.nextInt(10);
+                        int randomChanceEat = rand.nextInt(25);
                         choice = (String) menu.getChoiceFromOptions(FEED_MENU_OPTIONS);
                         switch (choice) {
                             case "$1.00":
+                                if (randomChanceReject < 2) {
+                                    System.out.println("\nThe bill was spat out! You may want to uncrumple that...");
+                                    break;
+                                }
+                                if (randomChanceEat == 1) {
+                                    System.out.println("\nThe machine just ate your bill! Today is not your day...");
+                                    break;
+                                }
                                 vendingMachine.insertBill(BigDecimal.valueOf(1));
                                 break;
                             case "$2.00":
+                                if (randomChanceReject < 2) {
+                                    System.out.println("\nThe bill was spat out! You may want to uncrumple that...");
+                                    break;
+                                }
+                                if (randomChanceEat == 1) {
+                                    System.out.println("\nThe machine just ate your bill! Today is not your day...");
+                                    break;
+                                }
                                 vendingMachine.insertBill(BigDecimal.valueOf(2));
                                 break;
                             case "$5.00":
+                                if (randomChanceReject < 2) {
+                                    System.out.println("\nThe bill was spat out! You may want to uncrumple that...");
+                                    break;
+                                }
+                                if (randomChanceEat == 1) {
+                                    System.out.println("\nThe machine just ate your bill! Today is not your day...");
+                                    break;
+                                }
                                 vendingMachine.insertBill(BigDecimal.valueOf(5));
                                 break;
                             case "$10.00":
+                                if (randomChanceReject < 2) {
+                                    System.out.println("\nThe bill was spat out! You may want to uncrumple that...");
+                                    break;
+                                }
+                                if (randomChanceEat == 1) {
+                                    System.out.println("\nThe machine just ate your bill! Today is not your day...");
+                                    break;
+                                }
                                 vendingMachine.insertBill(BigDecimal.valueOf(10));
                                 break;
                         }
@@ -75,18 +110,18 @@ public class VendingMachineCLI {
                             Item chosenItem = vendingMachine.getItem(itemChoice); //Pass the item code to the find Item method, store it in new item.
                             //If code not found, return to sale menu.
                             if (chosenItem == null) {
-                                System.out.println("Code not found.");
+                                System.out.println("\nCode not found.");
                                 break;
                             }
                             //If it's sold out, back to sale menu.
                             if (vendingMachine.getItemQuantity(chosenItem) == 0) {
-                                System.out.println("Oops! Sold out!");
+                                System.out.println("\nOops! Sold out!");
                                 break;
                             }
                             //If there's enough money in the balance...
                             if (vendingMachine.getBalance().subtract(chosenItem.getPrice()).compareTo(BigDecimal.valueOf(0)) >= 0) {
                                 //Dispense item.
-                                vendingMachine.dispenseItem(chosenItem);
+                                System.out.println(vendingMachine.dispenseItem(chosenItem));
                                 break;
                             }
                             //Otherwise tell user that they don't have enough money.
@@ -106,7 +141,7 @@ public class VendingMachineCLI {
             } else if (choice.equals(MAIN_MENU_OPTION_EXIT)) {
                 System.exit(0); //Exit ends program.
             } else if (choice.equals(MAIN_MENU_OPTION_SALES_REPORT)) {
-                System.out.println("\nGenerated sales report...");
+                System.out.println("\nGenerating sales report...");
                 vendingMachine.logSales();
             }
         }
